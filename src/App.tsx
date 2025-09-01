@@ -1,10 +1,7 @@
-import Task from "./components/Tasks";
-
 function App() {
   return (
     <>
-      <h1>Hello, world!</h1>
-      <Task />
+      <h1 className="bg-red-500">Task Manager</h1>
     </>
   );
 }
