@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 type SidebarButtonProps = {
   children: ReactNode;
-  variant: ReactNode;
+  variant: "selected" | "unselected";
 };
 
 const SidebarButton = ({ children, variant }: SidebarButtonProps) => {
