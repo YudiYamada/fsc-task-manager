@@ -1,0 +1,25 @@
+const TASKS = [
+  {
+    id: 1,
+    title: "Estudar React",
+    description: "estudar para se tornar um bom programador",
+    time: "morning",
+    status: "completed",
+  },
+  {
+    id: 2,
+    title: "Estudar TypeScript",
+    description: "estudar para se tornar um bom programador",
+    time: "afternoon",
+    status: "in_progress",
+  },
+  {
+    id: 3,
+    title: "Estudar JavaScript",
+    description: "estudar para se tornar um bom programador",
+    time: "evening",
+    status: "pending",
+  },
+];
+
+export default TASKS;
