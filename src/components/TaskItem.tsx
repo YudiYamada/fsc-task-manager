@@ -1,9 +1,14 @@
+import CheckIcon from "../assets/icons/check.svg?react";
+import LoadingIcon from "../assets/icons/loader.svg?react";
+import DetailsIcon from "../assets/icons/details.svg?react";
+
 type TaskProps = {
   task: {
     id: number;
     title: string;
     status: "pending" | "in_progress" | "completed";
   };
+  icon?: React.ReactNode;
 };
 
 const TaskItem = ({ task }: TaskProps) => {
@@ -21,9 +26,25 @@ const TaskItem = ({ task }: TaskProps) => {
 
   return (
     <div
-      className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-3 text-sm ${getStatusClasses()}`}
+      className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm ${getStatusClasses()}`}
     >
+      <label
+        className={`relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg ${getStatusClasses()}`}
+      >
+        <input
+          type="checkbox"
+          checked={task.status === "completed"}
+          className="absolute h-full w-full cursor-pointer opacity-0"
+        />
+        {task.status === "completed" && <CheckIcon />}
+        {task.status === "in_progress" && (
+          <LoadingIcon className="animate-spin" />
+        )}
+      </label>
       {task.title}
+      <a href="#" className="ml-auto transition hover:opacity-70">
+        <DetailsIcon />
+      </a>
     </div>
   );
 };
