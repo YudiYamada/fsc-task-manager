@@ -18,14 +18,27 @@ type Task = {
 };
 
 const Tasks = () => {
-  //setTasks
-  const [tasks] = useState<Task[]>(
+  const [tasks, setTasks] = useState<Task[]>(
     TASKS.map((task) => ({
       ...task,
       time: task.time as "morning" | "afternoon" | "evening",
       status: task.status as "pending" | "in_progress" | "completed",
     }))
   );
+
+  const handleTaskCheckboxClick = (taskId: number) => {
+    const newTasks = tasks.map((task) => {
+      if (task.id !== taskId) return task;
+
+      if (task.status === "pending") return { ...task, status: "in_progress" };
+      if (task.status === "in_progress")
+        return { ...task, status: "completed" };
+      if (task.status === "completed") return { ...task, status: "pending" };
+
+      return task;
+    });
+    setTasks(newTasks as Task[]);
+  };
 
   const morningTasks = tasks.filter((task) => task.time === "morning");
   const afternoonTasks = tasks.filter((task) => task.time === "afternoon");
@@ -58,7 +71,11 @@ const Tasks = () => {
         <div className="space-y-3">
           <TasksSeparator title="Manhã" icon={<SunIcon />} />
           {morningTasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              handleTaskCheckboxClick={handleTaskCheckboxClick}
+            />
           ))}
         </div>
       </div>
@@ -67,7 +84,11 @@ const Tasks = () => {
         <div className="my-6 space-y-3">
           <TasksSeparator title="Tarde" icon={<CloudSun />} />
           {afternoonTasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              handleTaskCheckboxClick={handleTaskCheckboxClick}
+            />
           ))}
         </div>
       </div>
@@ -76,7 +97,11 @@ const Tasks = () => {
         <div className="space-y-3">
           <TasksSeparator title="Noite" icon={<MoonIcon />} />
           {eveningTasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              handleTaskCheckboxClick={handleTaskCheckboxClick}
+            />
           ))}
         </div>
       </div>

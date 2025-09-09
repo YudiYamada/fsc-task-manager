@@ -9,9 +9,10 @@ type TaskProps = {
     status: "pending" | "in_progress" | "completed";
   };
   icon?: React.ReactNode;
+  handleTaskCheckboxClick: (id: number) => void;
 };
 
-const TaskItem = ({ task }: TaskProps) => {
+const TaskItem = ({ task, handleTaskCheckboxClick }: TaskProps) => {
   const getStatusClasses = () => {
     if (task.status === "completed") {
       return "bg-[rgba(0,173,181,0.1)] text-[#00ADB5]";
@@ -26,7 +27,7 @@ const TaskItem = ({ task }: TaskProps) => {
 
   return (
     <div
-      className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm ${getStatusClasses()}`}
+      className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm transition ${getStatusClasses()}`}
     >
       <label
         className={`relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg ${getStatusClasses()}`}
@@ -35,6 +36,7 @@ const TaskItem = ({ task }: TaskProps) => {
           type="checkbox"
           checked={task.status === "completed"}
           className="absolute h-full w-full cursor-pointer opacity-0"
+          onChange={() => handleTaskCheckboxClick(task.id)}
         />
         {task.status === "completed" && <CheckIcon />}
         {task.status === "in_progress" && (
