@@ -26,6 +26,11 @@ const Tasks = () => {
     }))
   );
 
+  const handleTaskDeleteClick = (taskId: number) => {
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks as Task[]);
+  };
+
   const handleTaskCheckboxClick = (taskId: number) => {
     const newTasks = tasks.map((task) => {
       if (task.id !== taskId) return task;
@@ -74,6 +79,7 @@ const Tasks = () => {
               key={task.id}
               task={task}
               handleTaskCheckboxClick={handleTaskCheckboxClick}
+              handleTaskDeleteClick={handleTaskDeleteClick}
             />
           ))}
         </div>
@@ -85,6 +91,7 @@ const Tasks = () => {
               key={task.id}
               task={task}
               handleTaskCheckboxClick={handleTaskCheckboxClick}
+              handleTaskDeleteClick={handleTaskDeleteClick}
             />
           ))}
         </div>
@@ -96,6 +103,7 @@ const Tasks = () => {
               key={task.id}
               task={task}
               handleTaskCheckboxClick={handleTaskCheckboxClick}
+              handleTaskDeleteClick={handleTaskDeleteClick}
             />
           ))}
         </div>

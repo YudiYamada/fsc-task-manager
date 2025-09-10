@@ -1,6 +1,8 @@
 import CheckIcon from "../assets/icons/check.svg?react";
 import LoadingIcon from "../assets/icons/loader.svg?react";
 import DetailsIcon from "../assets/icons/details.svg?react";
+import TrashIcon from "../assets/icons/trash.svg?react";
+import Button from "./Button";
 
 type TaskProps = {
   task: {
@@ -10,9 +12,14 @@ type TaskProps = {
   };
   icon?: React.ReactNode;
   handleTaskCheckboxClick: (id: number) => void;
+  handleTaskDeleteClick: (id: number) => void;
 };
 
-const TaskItem = ({ task, handleTaskCheckboxClick }: TaskProps) => {
+const TaskItem = ({
+  task,
+  handleTaskCheckboxClick,
+  handleTaskDeleteClick,
+}: TaskProps) => {
   const getStatusClasses = () => {
     if (task.status === "completed") {
       return "bg-[rgba(0,173,181,0.1)] text-[#00ADB5]";
@@ -44,9 +51,14 @@ const TaskItem = ({ task, handleTaskCheckboxClick }: TaskProps) => {
         )}
       </label>
       {task.title}
-      <a href="#" className="ml-auto transition hover:opacity-70">
-        <DetailsIcon />
-      </a>
+      <div className="ml-auto flex items-center justify-center gap-2">
+        <Button variant="ghost" onclick={() => handleTaskDeleteClick(task.id)}>
+          <TrashIcon className="transition hover:opacity-70" />
+        </Button>
+        <a href="#">
+          <DetailsIcon className="transition hover:opacity-70" />
+        </a>
+      </div>
     </div>
   );
 };
