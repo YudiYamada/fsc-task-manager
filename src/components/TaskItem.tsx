@@ -1,4 +1,4 @@
-import { CheckIcon, LoaderIcon, TrashIcon, DetailsIcon } from "../assets/icons";
+import { CheckIcon, DetailsIcon, LoaderIcon, TrashIcon } from "../assets/icons";
 import Button from "./Button";
 
 type TaskProps = {
