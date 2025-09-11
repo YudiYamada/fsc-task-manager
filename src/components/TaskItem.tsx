@@ -1,7 +1,4 @@
-import CheckIcon from "../assets/icons/check.svg?react";
-import LoadingIcon from "../assets/icons/loader.svg?react";
-import DetailsIcon from "../assets/icons/details.svg?react";
-import TrashIcon from "../assets/icons/trash.svg?react";
+import { CheckIcon, LoaderIcon, TrashIcon, DetailsIcon } from "../assets/icons";
 import Button from "./Button";
 
 type TaskProps = {
@@ -47,7 +44,7 @@ const TaskItem = ({
         />
         {task.status === "completed" && <CheckIcon />}
         {task.status === "in_progress" && (
-          <LoadingIcon className="animate-spin" />
+          <LoaderIcon className="animate-spin" />
         )}
       </label>
       {task.title}
