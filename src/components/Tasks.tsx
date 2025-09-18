@@ -9,6 +9,7 @@ import {
   TrashIcon,
 } from "../assets/icons";
 import TASKS from "../constants/tasks";
+import AddTaskDialogue from "./AddTaskDialogue";
 import Button from "./Button";
 import TaskItem from "./TaskItem";
 import TasksSeparator from "./TasksSeparator";
@@ -29,6 +30,8 @@ const Tasks = () => {
       status: task.status as "pending" | "in_progress" | "completed",
     }))
   );
+
+  const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false);
 
   const handleTaskDeleteClick = (taskId: number) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
@@ -77,10 +80,15 @@ const Tasks = () => {
             <TrashIcon />
             Limpar tarefas
           </Button>
-          <Button variant="primary">
+          <Button
+            variant="primary"
+            onClick={() => setAddTaskDialogIsOpen(true)}
+          >
             <AddIcon />
             Nova tarefa
           </Button>
+
+          <AddTaskDialogue isOpen={addTaskDialogIsOpen} />
         </div>
       </div>
 
