@@ -1,16 +1,25 @@
 import "./AddTaskDialogue.css";
 
 import type { ReactNode } from "react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
+import { v4 } from "uuid";
 
 import Button from "./Button";
 import Input from "./Input";
-import InputLabel from "./InputLabel";
+import TimeSelect from "./TimeSelect";
+
+type TimeOption = "morning" | "afternoon" | "evening";
 interface AddTaskDialogueProps {
   isOpen: boolean;
-  handleClose?: () => void;
+  handleClose: () => void;
+  handleSubmit: (task: {
+    id: string;
+    title: string;
+    time: TimeOption;
+    description: string;
+  }) => void;
   children?: ReactNode;
 }
 
@@ -18,8 +27,23 @@ const AddTaskDialogue = ({
   isOpen,
   children,
   handleClose,
+  handleSubmit,
 }: AddTaskDialogueProps) => {
+  const [title, setTitle] = useState("");
+  const [time, setTime] = useState<TimeOption>("morning");
+  const [description, setDescription] = useState("");
+
   const nodeRef = useRef(null);
+
+  const handleSaveClick = () => {
+    handleSubmit({
+      id: v4(),
+      title,
+      time,
+      description,
+    });
+    handleClose();
+  };
 
   return (
     <CSSTransition
@@ -50,25 +74,23 @@ const AddTaskDialogue = ({
                   id="title"
                   label="Título"
                   placeholder="Insira o título da terefa"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
                 />
 
-                <div className="flex flex-col gap-1 text-left">
-                  <InputLabel htmlFor="time">Horário</InputLabel>
-
-                  <select
-                    id="time"
-                    className="rounded-lg border border-solid border-[#ECECEC] px-4 py-3 outline-[#00ADB5] placeholder:text-sm focus:border-[#00ADB5]"
-                  >
-                    <option value="morning">Manhã</option>
-                    <option value="afternoon">Tarde</option>
-                    <option value="evening">Noite</option>
-                  </select>
-                </div>
+                <TimeSelect
+                  value={time}
+                  onChange={(event) =>
+                    setTime(event.target.value as TimeOption)
+                  }
+                />
 
                 <Input
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a tarefa"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
                 />
                 <div className="flex gap-3">
                   <Button
@@ -79,7 +101,11 @@ const AddTaskDialogue = ({
                   >
                     Cancelar
                   </Button>
-                  <Button size="large" className="w-full">
+                  <Button
+                    size="large"
+                    className="w-full"
+                    onClick={handleSaveClick}
+                  >
                     Salvar
                   </Button>
                 </div>

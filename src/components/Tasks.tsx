@@ -33,6 +33,10 @@ const Tasks = () => {
 
   const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false);
 
+  const morningTasks = tasks.filter((task) => task.time === "morning");
+  const afternoonTasks = tasks.filter((task) => task.time === "afternoon");
+  const eveningTasks = tasks.filter((task) => task.time === "evening");
+
   const handleTaskDeleteClick = (taskId: number) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(newTasks as Task[]);
@@ -61,9 +65,21 @@ const Tasks = () => {
     setTasks(newTasks as Task[]);
   };
 
-  const morningTasks = tasks.filter((task) => task.time === "morning");
-  const afternoonTasks = tasks.filter((task) => task.time === "afternoon");
-  const eveningTasks = tasks.filter((task) => task.time === "evening");
+  const handleAddTaskSubmit = (data: {
+    title: string;
+    description: string;
+    time: "morning" | "afternoon" | "evening";
+  }) => {
+    const newTask: Task = {
+      id: Date.now(),
+      status: "pending",
+      ...data,
+    };
+
+    setTasks([...tasks, newTask]);
+    toast.success("Tarefa adicionada com sucesso!");
+    setAddTaskDialogIsOpen(false);
+  };
 
   return (
     <div className="w-full space-y-6 px-8 py-16">
@@ -91,6 +107,7 @@ const Tasks = () => {
           <AddTaskDialogue
             isOpen={addTaskDialogIsOpen}
             handleClose={() => setAddTaskDialogIsOpen(false)}
+            handleSubmit={handleAddTaskSubmit}
           />
         </div>
       </div>
