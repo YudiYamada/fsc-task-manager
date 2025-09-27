@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes } from "react";
 
+import InputErrorMessage from "./InputErrorMessage";
 import InputLabel from "./InputLabel";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -18,9 +19,7 @@ const Input = ({ label, errorMessage, ...rest }: InputProps) => {
         className="rounded-lg border border-solid border-[#ECECEC] px-4 py-3 outline-[#00ADB5] placeholder:text-sm focus:border-[#00ADB5]"
         {...rest}
       />
-      {errorMessage && (
-        <p className="text-left text-xs text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </div>
   );
 };

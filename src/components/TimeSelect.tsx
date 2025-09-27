@@ -1,3 +1,4 @@
+import InputErrorMessage from "./InputErrorMessage";
 import InputLabel from "./InputLabel";
 
 type TimeSelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
@@ -19,7 +20,7 @@ const TimeSelect: React.FC<TimeSelectProps> = (props) => {
         <option value="evening">Noite</option>
       </select>
       {props.errorMessage && (
-        <p className="text-left text-xs text-red-500">{props.errorMessage}</p>
+        <InputErrorMessage>{props.errorMessage}</InputErrorMessage>
       )}
     </div>
   );
