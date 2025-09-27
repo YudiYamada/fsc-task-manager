@@ -35,23 +35,24 @@ const AddTaskDialogue = ({
   handleClose,
   handleSubmit,
 }: AddTaskDialogueProps) => {
-  const [title, setTitle] = useState("");
   const [time, setTime] = useState<TimeOption>("morning");
-  const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<ErrorItem[]>([]);
 
   const nodeRef = useRef(null);
+  const titleRef = useRef("" as unknown as HTMLInputElement);
+  const descriptionRef = useRef("" as unknown as HTMLInputElement);
 
   useEffect(() => {
     if (!isOpen) {
-      setTitle("");
       setTime("morning");
-      setDescription("");
     }
   }, [isOpen]);
 
   const handleSaveClick = () => {
     const newErrors = [];
+
+    const title = titleRef.current?.value || "";
+    const description = descriptionRef.current?.value || "";
 
     if (!title.trim()) {
       newErrors.push({
@@ -124,9 +125,8 @@ const AddTaskDialogue = ({
                   id="title"
                   label="Título"
                   placeholder="Insira o título da terefa"
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
                   errorMessage={titleError?.message}
+                  ref={titleRef}
                 />
 
                 <TimeSelect
@@ -141,8 +141,7 @@ const AddTaskDialogue = ({
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a tarefa"
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
+                  ref={descriptionRef}
                   errorMessage={descriptionError?.message}
                 />
 

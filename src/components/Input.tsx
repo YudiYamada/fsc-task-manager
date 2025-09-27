@@ -5,6 +5,7 @@ import InputLabel from "./InputLabel";
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   errorMessage?: string;
+  ref?: React.Ref<HTMLInputElement>;
 };
 
 const Input = ({ label, errorMessage, ...rest }: InputProps) => {
