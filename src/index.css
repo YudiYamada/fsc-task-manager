@@ -4,3 +4,16 @@ body {
   font-family: "Poppins", "sans-serif";
   background-color: #f8f8f8;
 }
+
+@theme {
+  --color-brand-dark-blue: #35383E;
+  --color-brand-primary: #00ADB5;
+  --color-brand-dark-gray: #818181;
+  --color-brand-text-gray: #9A9C9F;
+  --color-brand-light-gray: #EEEEEE;
+  --color-brand-white: #FFFFFF;
+  --color-brand-background: #F8F8F8;
+  --color-brand-border: #F4F4F4;
+  --color-brand-process: #FFC107;
+  --color-brand-danger: #EF4444;
+}

@@ -16,7 +16,7 @@ const Input = ({ label, errorMessage, ...rest }: InputProps) => {
 
       <input
         type="text"
-        className="rounded-lg border border-solid border-[#ECECEC] px-4 py-3 outline-[#00ADB5] placeholder:text-sm focus:border-[#00ADB5]"
+        className="outline-brand-primary focus:border-brand-primary border-brand-border rounded-lg border border-solid px-4 py-3 placeholder:text-sm"
         {...rest}
       />
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}

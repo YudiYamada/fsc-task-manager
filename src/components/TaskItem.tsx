@@ -19,14 +19,14 @@ const TaskItem = ({
 }: TaskProps) => {
   const getStatusClasses = () => {
     if (task.status === "completed") {
-      return "bg-[rgba(0,173,181,0.1)] text-[#00ADB5]";
+      return "bg-brand-primary/10 text-brand-primary";
     }
 
     if (task.status === "in_progress") {
-      return "bg-[rgba(255,193,7,0.1)] text-[#FFC107]";
+      return "bg-brand-process/10 text-brand-process";
     }
 
-    return "bg-[rgba(43,45,66,0.1)] text-[#2B2D42]";
+    return "bg-brand-text-gray/10 text-brand-text-gray";
   };
 
   return (
