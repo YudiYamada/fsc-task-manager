@@ -49,7 +49,7 @@ const TaskItem = ({
       </label>
       {task.title}
       <div className="ml-auto flex items-center justify-center gap-2">
-        <Button variant="ghost" onClick={() => handleTaskDeleteClick(task.id)}>
+        <Button color="ghost" onClick={() => handleTaskDeleteClick(task.id)}>
           <TrashIcon className="transition hover:opacity-70" />
         </Button>
         <a href="#">

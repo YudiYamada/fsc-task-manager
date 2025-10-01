@@ -1,6 +1,8 @@
+import { tv } from "tailwind-variants";
+
 type ButtonProps = {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
+  color?: "primary" | "secondary" | "ghost";
   onClick?: () => void;
   size?: "small" | "large";
   className?: string;
@@ -8,40 +10,32 @@ type ButtonProps = {
 
 const Button = ({
   children,
-  variant = "primary",
+  color = "primary",
   onClick,
   size = "large",
   className,
 }: ButtonProps) => {
-  const getVariantClasses = () => {
-    if (variant === "primary") {
-      return "bg-brand-primary text-white";
-    }
-
-    if (variant === "secondary") {
-      return "bg-brand-light-gray text-brand-dark-blue";
-    }
-
-    if (variant === "ghost") {
-      return "bg-transparent text-brand-dark-gray";
-    }
-  };
-
-  const getSizeClasses = () => {
-    if (size === "small") {
-      return "py-1 text-xs";
-    }
-
-    if (size === "large") {
-      return "py-2 text-sm";
-    }
-  };
+  const button = tv({
+    base: "flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-1 text-xs transition hover:opacity-75",
+    variants: {
+      color: {
+        primary: "bg-brand-primary text-white",
+        secondary: "bg-brand-light-gray text-brand-dark-blue",
+        ghost: "text-brand-dark-gray bg-transparent",
+      },
+      size: {
+        small: "py-1 text-xs",
+        large: "py-2 text-sm",
+      },
+    },
+    defaultVariants: {
+      color: "primary",
+      size: "small",
+    },
+  });
 
   return (
-    <button
-      className={`flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-1 text-xs transition hover:opacity-70 ${getVariantClasses()} ${getSizeClasses()} ${className}`}
-      onClick={onClick}
-    >
+    <button className={button({ color, size, className })} onClick={onClick}>
       {children}
     </button>
   );
