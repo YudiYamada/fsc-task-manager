@@ -6,6 +6,7 @@ type ButtonProps = {
   onClick?: () => void;
   size?: "small" | "large";
   className?: string;
+  disabled?: boolean;
 };
 
 const Button = ({
@@ -14,6 +15,7 @@ const Button = ({
   onClick,
   size = "large",
   className,
+  disabled,
 }: ButtonProps) => {
   const button = tv({
     base: "flex cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-1 text-xs transition hover:opacity-75",
@@ -35,7 +37,11 @@ const Button = ({
   });
 
   return (
-    <button className={button({ color, size, className })} onClick={onClick}>
+    <button
+      className={button({ color, size, className })}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );
