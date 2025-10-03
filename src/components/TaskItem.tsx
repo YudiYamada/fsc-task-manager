@@ -3,13 +3,13 @@ import Button from "./Button";
 
 type TaskProps = {
   task: {
-    id: number;
+    id: string;
     title: string;
     status: "pending" | "in_progress" | "completed";
   };
   icon?: React.ReactNode;
-  handleTaskCheckboxClick: (id: number) => void;
-  handleTaskDeleteClick: (id: number) => void;
+  handleTaskCheckboxClick: (id: string) => void;
+  handleTaskDeleteClick: (id: string) => void;
 };
 
 const TaskItem = ({
