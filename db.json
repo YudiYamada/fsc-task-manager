@@ -20,18 +20,6 @@
       "description": "estudar para se tornar um bom programador",
       "time": "evening",
       "status": "pending"
-    },
-    {
-      "id": "0a0209e4-2fec-444c-b3ce-8d51a0294b83",
-      "title": "awd",
-      "time": "morning",
-      "description": "wad"
-    },
-    {
-      "id": "37c29b00-1cfa-49cb-b2f3-39a96451e98f",
-      "title": "teste",
-      "time": "morning",
-      "description": "testando"
     }
   ]
 }
