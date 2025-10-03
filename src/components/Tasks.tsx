@@ -14,7 +14,7 @@ import TaskItem from "./TaskItem";
 import TasksSeparator from "./TasksSeparator";
 
 type Task = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   time: "morning" | "afternoon" | "evening";
@@ -41,13 +41,13 @@ const Tasks = () => {
   const afternoonTasks = tasks.filter((task) => task.time === "afternoon");
   const eveningTasks = tasks.filter((task) => task.time === "evening");
 
-  const handleTaskDeleteClick = (taskId: number) => {
+  const handleTaskDeleteClick = (taskId: string) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(newTasks as Task[]);
     toast.success("Tarefa removida com sucesso");
   };
 
-  const handleTaskCheckboxClick = (taskId: number) => {
+  const handleTaskCheckboxClick = (taskId: string) => {
     const newTasks = tasks.map((task) => {
       if (task.id !== taskId) return task;
 
@@ -69,16 +69,27 @@ const Tasks = () => {
     setTasks(newTasks as Task[]);
   };
 
-  const handleAddTaskSubmit = (data: {
+  const handleAddTaskSubmit = async (task: {
     title: string;
     description: string;
     time: "morning" | "afternoon" | "evening";
   }) => {
     const newTask: Task = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       status: "pending",
-      ...data,
+      ...task,
     };
+
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      body: JSON.stringify(task),
+    });
+
+    if (!response.ok) {
+      return toast.error(
+        "Erro ao adicionar a tarefa. Por favor, tente novamente."
+      );
+    }
 
     setTasks([...tasks, newTask]);
     toast.success("Tarefa adicionada com sucesso!");
