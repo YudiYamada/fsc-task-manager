@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
-import { v4 } from "uuid";
 
+import { LoaderIcon } from "../assets/icons";
 import Button from "./Button";
 import Input from "./Input";
 import TimeSelect from "./TimeSelect";
@@ -20,23 +20,26 @@ type ErrorItem = {
 interface AddTaskDialogueProps {
   isOpen: boolean;
   handleClose: () => void;
-  handleSubmit: (task: {
+  children?: ReactNode;
+  onSubmitSuccess: (task: {
     id: string;
     title: string;
     time: TimeOption;
     description: string;
   }) => void;
-  children?: ReactNode;
+  onSubmitError?: (errors: ErrorItem[]) => void;
 }
 
 const AddTaskDialogue = ({
   isOpen,
   children,
   handleClose,
-  handleSubmit,
+  onSubmitSuccess,
+  onSubmitError,
 }: AddTaskDialogueProps) => {
   const [time, setTime] = useState<TimeOption>("morning");
   const [errors, setErrors] = useState<ErrorItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const nodeRef = useRef(null);
   const titleRef = useRef("" as unknown as HTMLInputElement);
@@ -48,7 +51,8 @@ const AddTaskDialogue = ({
     }
   }, [isOpen]);
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
+    setIsLoading(true);
     const newErrors = [];
 
     const title = titleRef.current?.value || "";
@@ -78,15 +82,26 @@ const AddTaskDialogue = ({
     setErrors(newErrors);
 
     if (newErrors.length > 0) {
-      return;
+      return setIsLoading(false);
     }
 
-    handleSubmit({
-      id: v4(),
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      body: JSON.stringify({ title, time, description }),
+    });
+
+    if (!response.ok) {
+      setIsLoading(false);
+      return onSubmitError?.(newErrors);
+    }
+
+    onSubmitSuccess({
       title,
       time,
       description,
+      id: (await response.json()).id,
     });
+    setIsLoading(false);
     handleClose();
   };
 
@@ -158,7 +173,9 @@ const AddTaskDialogue = ({
                     size="large"
                     className="w-full"
                     onClick={handleSaveClick}
+                    disabled={isLoading}
                   >
+                    {isLoading && <LoaderIcon className="animate-spin" />}
                     Salvar
                   </Button>
                 </div>
