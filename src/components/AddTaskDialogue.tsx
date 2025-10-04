@@ -142,6 +142,7 @@ const AddTaskDialogue = ({
                   placeholder="Insira o título da terefa"
                   errorMessage={titleError?.message}
                   ref={titleRef}
+                  disabled={isLoading}
                 />
 
                 <TimeSelect
@@ -150,6 +151,7 @@ const AddTaskDialogue = ({
                     setTime(event.target.value as TimeOption)
                   }
                   errorMessage={timeError?.message}
+                  disabled={isLoading}
                 />
 
                 <Input
@@ -158,6 +160,7 @@ const AddTaskDialogue = ({
                   placeholder="Descreva a tarefa"
                   ref={descriptionRef}
                   errorMessage={descriptionError?.message}
+                  disabled={isLoading}
                 />
 
                 <div className="flex gap-3">
