@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { CheckIcon, DetailsIcon, LoaderIcon, TrashIcon } from "../assets/icons";
@@ -80,9 +81,9 @@ const TaskItem = ({
             <TrashIcon className="transition hover:opacity-70" />
           )}
         </Button>
-        <a href="#">
+        <Link to={`task/${task.id}`}>
           <DetailsIcon className="transition hover:opacity-70" />
-        </a>
+        </Link>
       </div>
     </div>
   );
