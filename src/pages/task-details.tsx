@@ -25,6 +25,7 @@ const TaskDetailsPage = () => {
   const [task, setTask] = useState<TaskProps | null>(null);
   const navigate = useNavigate();
   const [saveIsLoading, setSaveIsLoading] = useState(false);
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [errors, setErrors] = useState<ErrorItem[]>([]);
 
   const titleRef = useRef("" as unknown as HTMLInputElement);
@@ -93,7 +94,21 @@ const TaskDetailsPage = () => {
     const newTask = await response.json();
     setTask(newTask);
     setSaveIsLoading(false);
-    // handleBackClick();
+    handleBackClick();
+  };
+
+  const handleDeleteClick = async () => {
+    setDeleteIsLoading(true);
+    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      return toast.error("Ocorreu um erro ao deletar a tarefa.");
+    }
+
+    setDeleteIsLoading(false);
+    toast.success("Tarefa deletada com sucesso.");
+    handleBackClick();
   };
 
   const titleError = errors.find((error) => error.inputName === "title");
@@ -127,7 +142,13 @@ const TaskDetailsPage = () => {
             <h1 className="mt-2 text-xl font-semibold">{task?.title}</h1>
           </div>
 
-          <Button className="h-fit self-end" color="danger">
+          <Button
+            className="h-fit self-end"
+            color="danger"
+            onClick={handleDeleteClick}
+            disabled={deleteIsLoading}
+          >
+            {deleteIsLoading && <LoaderIcon className="animate-spin" />}
             <TrashIcon />
             Deletar tarefa
           </Button>
