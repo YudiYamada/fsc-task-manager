@@ -43,6 +43,7 @@ const AddTaskDialogue = ({
 
   const nodeRef = useRef(null);
   const titleRef = useRef("" as unknown as HTMLInputElement);
+  const timeRef = useRef<HTMLSelectElement>(null);
   const descriptionRef = useRef("" as unknown as HTMLInputElement);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ const AddTaskDialogue = ({
     const newErrors = [];
 
     const title = titleRef.current?.value || "";
+    const time = timeRef.current?.value as TimeOption;
     const description = descriptionRef.current?.value || "";
 
     if (!title.trim()) {
