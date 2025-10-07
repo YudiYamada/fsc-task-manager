@@ -42,9 +42,9 @@ const AddTaskDialogue = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const nodeRef = useRef(null);
-  const titleRef = useRef("" as unknown as HTMLInputElement);
+  const titleRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLSelectElement>(null);
-  const descriptionRef = useRef("" as unknown as HTMLInputElement);
+  const descriptionRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -54,11 +54,13 @@ const AddTaskDialogue = ({
 
   const handleSaveClick = async () => {
     setIsLoading(true);
-    const newErrors = [];
+    const newErrors: ErrorItem[] = [];
 
     const title = titleRef.current?.value || "";
-    const time = timeRef.current?.value as TimeOption;
+    const rawTime = timeRef.current?.value || "";
     const description = descriptionRef.current?.value || "";
+
+    const validTimes: TimeOption[] = ["morning", "afternoon", "evening"];
 
     if (!title.trim()) {
       newErrors.push({
@@ -67,10 +69,15 @@ const AddTaskDialogue = ({
       });
     }
 
-    if (!time.trim()) {
+    if (!rawTime.trim()) {
       newErrors.push({
         inputName: "time",
         message: "O período é obrigatório.",
+      });
+    } else if (!validTimes.includes(rawTime as TimeOption)) {
+      newErrors.push({
+        inputName: "time",
+        message: "Selecione um horário válido.",
       });
     }
 
@@ -87,6 +94,8 @@ const AddTaskDialogue = ({
       return setIsLoading(false);
     }
 
+    const time = rawTime as TimeOption;
+
     const response = await fetch("http://localhost:3000/tasks", {
       method: "POST",
       body: JSON.stringify({ title, time, description }),
@@ -97,12 +106,9 @@ const AddTaskDialogue = ({
       return onSubmitError?.(newErrors);
     }
 
-    onSubmitSuccess({
-      title,
-      time,
-      description,
-      id: (await response.json()).id,
-    });
+    const { id } = await response.json();
+
+    onSubmitSuccess({ title, time, description, id });
     setIsLoading(false);
     handleClose();
   };
@@ -127,7 +133,6 @@ const AddTaskDialogue = ({
             ref={nodeRef}
             className="fixed top-0 bottom-0 left-0 flex h-screen w-screen items-center justify-center backdrop-blur"
           >
-            {/* DIALOG */}
             <div className="rounded-xl bg-white p-5 text-center shadow-lg">
               <h2 className="text-brand-dark-blue text-xl font-semibold">
                 Nova Tarefa
@@ -141,13 +146,14 @@ const AddTaskDialogue = ({
                 <Input
                   id="title"
                   label="Título"
-                  placeholder="Insira o título da terefa"
+                  placeholder="Insira o título da tarefa"
                   errorMessage={titleError?.message}
                   ref={titleRef}
                   disabled={isLoading}
                 />
 
                 <TimeSelect
+                  ref={timeRef}
                   value={time}
                   onChange={(event) =>
                     setTime(event.target.value as TimeOption)
