@@ -7,6 +7,7 @@ type ButtonProps = {
   size?: "small" | "large";
   className?: string;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 };
 
 const Button = ({
