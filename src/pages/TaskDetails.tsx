@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,33 +10,87 @@ import Input from "../components/Input";
 import Sidebar from "../components/Sidebar";
 import TimeSelect from "../components/TimeSelect";
 
-type TaskProps = {
-  title?: string;
-  time?: string;
-  description?: string;
-};
-
 type DataProps = {
+  id: string;
   title: string;
   time: string;
   description: string;
 };
 
 const TaskDetailsPage = () => {
+  const queryClient = useQueryClient();
   const { taskId } = useParams();
-  const [task, setTask] = useState<TaskProps | null>(null);
   const navigate = useNavigate();
-  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
     reset,
   } = useForm<DataProps>({
     defaultValues: {
       title: "",
-      time: "",
+      time: "morning",
       description: "",
+    },
+  });
+
+  const { mutate: updateTask, isPending: updateTaskIsLoading } = useMutation({
+    mutationKey: ["updateTask", taskId],
+    mutationFn: async (data: DataProps) => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: data.title.trim(),
+          time: data.time.trim(),
+          description: data.description.trim(),
+        }),
+      });
+
+      if (!response.ok) throw new Error();
+
+      const updatedTask = await response.json();
+
+      queryClient.setQueryData(
+        ["tasks"],
+        (oldTasks: DataProps[] | undefined) => {
+          if (!oldTasks) return [];
+          return oldTasks.map((task) =>
+            task.id === taskId ? updatedTask : task
+          );
+        }
+      );
+    },
+  });
+
+  const { mutate: deleteTask, isPending: deleteTaskIsLoading } = useMutation({
+    mutationKey: ["deleteTask", taskId],
+    mutationFn: async () => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error();
+
+      const deletedTask = await response.json();
+
+      queryClient.setQueryData(
+        ["tasks"],
+        (oldTasks: DataProps[] | undefined) => {
+          if (!oldTasks) return [];
+          return oldTasks.filter((task) => task.id !== deletedTask.id);
+        }
+      );
+    },
+  });
+
+  const { data: task } = useQuery({
+    queryKey: ["tasks", taskId],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "GET",
+      });
+      const data = await response.json();
+      reset(data);
+      return data;
     },
   });
 
@@ -44,48 +98,22 @@ const TaskDetailsPage = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`);
-      const data = await response.json();
-      setTask(data);
-      reset(data);
-    };
-
-    fetchTask();
-  }, [taskId, reset]);
-
   const handleSaveClick = async (data: DataProps) => {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        title: data.title.trim(),
-        time: data.time.trim(),
-        description: data.description.trim(),
-      }),
+    updateTask(data, {
+      onSuccess: () => toast.success("Tarefa atualizada com sucesso!"),
+
+      onError: () => toast.error("Ocorreu um erro ao atualizar a tarefa."),
     });
-
-    if (!response.ok) {
-      return toast.error("Ocorreu um erro ao salvar a tarefa.");
-    }
-
-    const newTask = await response.json();
-    setTask(newTask);
-    handleBackClick();
   };
 
   const handleDeleteClick = async () => {
-    setDeleteIsLoading(true);
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
+    deleteTask(undefined, {
+      onSuccess: () => {
+        toast.success("Tarefa deletada com sucesso!");
+        navigate(-1);
+      },
+      onError: () => toast.error("Ocorreu um erro ao deletar a tarefa."),
     });
-    if (!response.ok) {
-      return toast.error("Ocorreu um erro ao deletar a tarefa.");
-    }
-
-    setDeleteIsLoading(false);
-    toast.success("Tarefa deletada com sucesso.");
-    handleBackClick();
   };
 
   return (
@@ -117,9 +145,9 @@ const TaskDetailsPage = () => {
             className="h-fit self-end"
             color="danger"
             onClick={handleDeleteClick}
-            disabled={deleteIsLoading}
+            disabled={deleteTaskIsLoading}
           >
-            {deleteIsLoading && <LoaderIcon className="animate-spin" />}
+            {deleteTaskIsLoading && <LoaderIcon className="animate-spin" />}
             <TrashIcon />
             Deletar tarefa
           </Button>
@@ -181,8 +209,12 @@ const TaskDetailsPage = () => {
               <Button size="large" color="secondary" onClick={handleBackClick}>
                 Cancelar
               </Button>
-              <Button size="large" disabled={isSubmitting} type="submit">
-                {isSubmitting && <LoaderIcon className="animate-spin" />}
+              <Button
+                size="large"
+                disabled={updateTaskIsLoading || deleteTaskIsLoading}
+                type="submit"
+              >
+                {updateTaskIsLoading && <LoaderIcon className="animate-spin" />}
                 Salvar
               </Button>
             </div>

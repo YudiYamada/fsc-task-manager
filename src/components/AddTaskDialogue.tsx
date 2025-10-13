@@ -1,10 +1,13 @@
 import "./AddTaskDialogue.css";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { CSSTransition } from "react-transition-group";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 import { LoaderIcon } from "../assets/icons";
 import Button from "./Button";
@@ -12,10 +15,14 @@ import Input from "./Input";
 import TimeSelect from "./TimeSelect";
 
 type TimeOption = "morning" | "afternoon" | "evening";
+type TaskStatus = "pending" | "in_progress" | "completed";
 
-type ErrorItem = {
-  inputName: string;
-  message: string;
+type Task = {
+  id: string;
+  title: string;
+  time: TimeOption;
+  description: string;
+  status: TaskStatus;
 };
 
 type DataProps = {
@@ -28,22 +35,35 @@ interface AddTaskDialogueProps {
   isOpen: boolean;
   handleClose: () => void;
   children?: ReactNode;
-  onSubmitSuccess: (task: {
-    id: string;
-    title: string;
-    time: TimeOption;
-    description: string;
-  }) => void;
-  onSubmitError?: (errors: ErrorItem[]) => void;
 }
 
 const AddTaskDialogue = ({
   isOpen,
   children,
   handleClose,
-  onSubmitSuccess,
-  onSubmitError,
 }: AddTaskDialogueProps) => {
+  const nodeRef = useRef(null);
+
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation<Task, Error, Task>({
+    mutationKey: ["addTask"],
+    mutationFn: async (task) => {
+      const response = await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(task),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar tarefa.");
+      }
+
+      return response.json();
+    },
+  });
+
   const {
     register,
     formState: { errors, isSubmitting },
@@ -57,37 +77,29 @@ const AddTaskDialogue = ({
     },
   });
 
-  const nodeRef = useRef(null);
-
-  const handleSaveClick = async (data: DataProps) => {
-    const response = await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      body: JSON.stringify({
-        title: data.title.trim(),
-        time: data.time,
-        description: data.description.trim(),
-      }),
-    });
-
-    if (!response.ok) {
-      return onSubmitError?.([
-        { inputName: "title", message: "Erro ao salvar a tarefa." },
-      ]);
-    }
-
-    const { id } = await response.json();
-
-    onSubmitSuccess({
+  const handleSaveClick = (data: DataProps) => {
+    const task: Task = {
+      id: uuidv4(),
       title: data.title.trim(),
       time: data.time as TimeOption,
       description: data.description.trim(),
-      id,
-    });
-    handleClose();
-    reset({
-      title: "",
-      time: "morning",
-      description: "",
+      status: "pending",
+    };
+
+    mutate(task, {
+      onSuccess: () => {
+        queryClient.setQueryData<Task[]>(["tasks"], (currentTasks = []) => [
+          ...currentTasks,
+          task,
+        ]);
+        handleClose();
+        reset({
+          title: "",
+          time: "morning",
+          description: "",
+        });
+      },
+      onError: () => toast.error("Erro ao adicionar tarefa."),
     });
   };
 
