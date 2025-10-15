@@ -1,6 +1,5 @@
 import "./AddTaskDialogue.css";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import { createPortal } from "react-dom";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
 import { LoaderIcon } from "../assets/icons";
+import { useAddTask } from "../hooks/data/use-add-task";
 import Button from "./Button";
 import Input from "./Input";
 import TimeSelect from "./TimeSelect";
@@ -44,25 +44,7 @@ const AddTaskDialogue = ({
 }: AddTaskDialogueProps) => {
   const nodeRef = useRef(null);
 
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation<Task, Error, Task>({
-    mutationKey: ["addTask"],
-    mutationFn: async (task) => {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(task),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao adicionar tarefa.");
-      }
-
-      return response.json();
-    },
-  });
+  const { mutate: addTask } = useAddTask();
 
   const {
     register,
@@ -86,12 +68,8 @@ const AddTaskDialogue = ({
       status: "pending",
     };
 
-    mutate(task, {
+    addTask(task, {
       onSuccess: () => {
-        queryClient.setQueryData<Task[]>(["tasks"], (currentTasks = []) => [
-          ...currentTasks,
-          task,
-        ]);
         handleClose();
         reset({
           title: "",
