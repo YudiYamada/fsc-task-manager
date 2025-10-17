@@ -4,6 +4,7 @@ const Home = () => {
   return (
     <div className="flex">
       <Sidebar />
+      <h1>Home</h1>
     </div>
   );
 };
