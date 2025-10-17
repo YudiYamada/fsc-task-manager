@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 type TimeOption = "morning" | "afternoon" | "evening";
 type TaskStatus = "pending" | "in_progress" | "completed";
@@ -16,19 +17,10 @@ export const useAddTask = () => {
   return useMutation<Task, Error, Task>({
     mutationKey: ["addTask"],
     mutationFn: async (task) => {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(task),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao adicionar tarefa.");
-      }
-
-      const createdTask = await response.json();
+      const { data: createdTask } = await axios.post<Task>(
+        "http://localhost:3000/tasks",
+        task
+      );
       return createdTask;
     },
     onSuccess: (createdTask) => {
