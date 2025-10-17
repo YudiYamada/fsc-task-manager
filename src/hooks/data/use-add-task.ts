@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { taskQueryKeys } from "../../keys/queries";
 import { api } from "../../lib/axios";
 
 type TimeOption = "morning" | "afternoon" | "evening";
@@ -22,10 +23,10 @@ export const useAddTask = () => {
       return createdTask;
     },
     onSuccess: (createdTask) => {
-      queryClient.setQueryData<Task[]>(["tasks"], (currentTasks = []) => [
-        ...currentTasks,
-        createdTask,
-      ]);
+      queryClient.setQueryData<Task[]>(
+        taskQueryKeys.getAll(),
+        (currentTasks = []) => [...currentTasks, createdTask]
+      );
     },
   });
 };
