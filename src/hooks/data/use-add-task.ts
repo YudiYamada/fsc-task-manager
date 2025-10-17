@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+
+import { api } from "../../lib/axios";
 
 type TimeOption = "morning" | "afternoon" | "evening";
 type TaskStatus = "pending" | "in_progress" | "completed";
@@ -17,10 +18,7 @@ export const useAddTask = () => {
   return useMutation<Task, Error, Task>({
     mutationKey: ["addTask"],
     mutationFn: async (task) => {
-      const { data: createdTask } = await axios.post<Task>(
-        "http://localhost:3000/tasks",
-        task
-      );
+      const { data: createdTask } = await api.post<Task>("/tasks", task);
       return createdTask;
     },
     onSuccess: (createdTask) => {

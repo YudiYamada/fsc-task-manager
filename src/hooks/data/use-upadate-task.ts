@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+
+import { api } from "../../lib/axios";
 
 type DataProps = {
   id: string;
@@ -13,14 +14,11 @@ export const useUpdateTask = (taskId: string) => {
   return useMutation({
     mutationKey: ["updateTask", taskId],
     mutationFn: async (newTask: DataProps) => {
-      const { data: updatedTask } = await axios.patch(
-        `http://localhost:3000/tasks/${taskId}`,
-        {
-          title: newTask.title.trim(),
-          time: newTask.time.trim(),
-          description: newTask.description.trim(),
-        }
-      );
+      const { data: updatedTask } = await api.patch(`/tasks/${taskId}`, {
+        title: newTask.title.trim(),
+        time: newTask.time.trim(),
+        description: newTask.description.trim(),
+      });
       queryClient.setQueryData(
         ["tasks"],
         (oldTasks: DataProps[] | undefined) => {
